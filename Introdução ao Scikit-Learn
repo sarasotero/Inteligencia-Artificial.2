@@ -1,0 +1,44 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+# Carregar o conjunto de dados Iris
+iris = load_iris()
+
+# Exemplo de gráfico de dispersão (scatter plot) para visualização
+sns.set(style="ticks")
+plt.figure(figsize=(12, 10))
+plot_number = 1
+for i in range(4):
+    for j in range(i+1, 4):
+        plt.subplot(3, 2, plot_number)
+        plt.scatter(iris.data[:, i], iris.data[:, j], c=iris.target, cmap=plt.cm.Set1, edgecolor='k')
+        plt.xlabel(iris.feature_names[i])
+        plt.ylabel(iris.feature_names[j])
+        plot_number += 1
+plt.tight_layout()
+plt.show()
+
+# Dividir os dados em conjuntos de treino e teste
+X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, test_size=0.3, random_state=42)
+
+# Criar um modelo de machine learning
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X_train, y_train)
+
+# Avaliar o modelo
+y_pred = knn.predict(X_test)
+accuracy = metrics.accuracy_score(y_test, y_pred)
+print("Acurácia do modelo:", accuracy)
+
+# Matriz de confusão para avaliar o modelo
+confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(6, 4))
+sns.heatmap(confusion_matrix, annot=True, cmap="Blues", xticklabels=iris.target_names, yticklabels=iris.target_names)
+plt.title('Matriz de Confusão')
+plt.xlabel('Valor Predito')
+plt.ylabel('Valor Real')
+plt.show()
